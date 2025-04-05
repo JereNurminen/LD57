@@ -188,9 +188,9 @@
                 },
                 {
                     "name": "",
-                    "id": "b75d754a-1a1b-4e28-9f0d-4af97ec5de50",
+                    "id": "6d71e2cc-921f-4888-a8a2-6340cce14193",
                     "path": "<Keyboard>/space",
-                    "interactions": "",
+                    "interactions": "Hold",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
                     "action": "Hover",
