@@ -52,9 +52,9 @@ public class GameManager : MonoBehaviour
 
     public void OnPlayerEnterChunk(Chunk chunk)
     {
+        currentChunk = chunk;
         if (lastChunkIndex < chunk.chunkIndex + chunksForward)
         {
-            currentChunk = chunk;
             LoadNextChunk();
         }
     }

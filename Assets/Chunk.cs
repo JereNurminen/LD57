@@ -14,6 +14,8 @@ public class Chunk : MonoBehaviour
     private bool playerInChunk = false;
     private float entryY;
     private float exitY;
+    public float cameraWorldMinX;
+    public float cameraWorldMaxX;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -21,6 +23,8 @@ public class Chunk : MonoBehaviour
         gameManager = FindFirstObjectByType<GameManager>();
         entryY = transform.TransformPoint(entryPoint).y;
         exitY = transform.TransformPoint(exitPoint).y;
+        cameraWorldMinX = transform.TransformPoint(new Vector2(cameraMinX, 0)).x;
+        cameraWorldMaxX = transform.TransformPoint(new Vector2(cameraMaxX, 0)).x;
     }
 
     // Update is called once per frame
