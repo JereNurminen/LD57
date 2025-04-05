@@ -1,4 +1,5 @@
 using NUnit.Framework.Constraints;
+using UnityEditor.EditorTools;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -43,6 +44,10 @@ public class PlayerController : MonoBehaviour
     [Tooltip("A small distance to keep away from colliders to avoid penetration.")]
     [SerializeField]
     private float skinWidth = 0.01f;
+
+    [Tooltip("Layers that are detected when dropping.")]
+    [SerializeField]
+    private LayerMask dropLayerMask;
 
     private bool isGrounded = false;
     private bool jumpConsumed = false;
@@ -147,6 +152,7 @@ public class PlayerController : MonoBehaviour
             {
                 velocity.x = 0f;
             }
+            transform.localScale = new Vector3(1f, 1f, 1f);
         }
         else if (velocity.x < 0f)
         {
@@ -155,6 +161,7 @@ public class PlayerController : MonoBehaviour
             {
                 velocity.x = 0f;
             }
+            transform.localScale = new Vector3(-1f, 1f, 1f);
         }
         else if (Mathf.Approximately(velocity.x, 0f)) { }
 
@@ -191,6 +198,38 @@ public class PlayerController : MonoBehaviour
                 animator.SetBool("isHovering", false);
                 gravityToApply = dropGravity;
                 fallSpeed = maxDropFallSpeed;
+
+                var bounds = playerCollider.bounds;
+                float rayLength = 1f;
+                int rayCount = 3;
+                float spacing = bounds.size.x / (rayCount - 1);
+
+                for (int i = 0; i < rayCount; i++)
+                {
+                    Vector2 rayOrigin = new Vector2(bounds.min.x + i * spacing, bounds.min.y);
+                    RaycastHit2D hit = Physics2D.Raycast(
+                        rayOrigin,
+                        Vector2.down,
+                        rayLength,
+                        dropLayerMask
+                    );
+
+                    if (hit.collider != null)
+                    {
+                        var target = hit.collider.gameObject;
+                        Debug.Log($"Dropped on {target.name}");
+                        var targetStompable = target.GetComponent<Stompable>();
+                        if (targetStompable != null)
+                        {
+                            targetStompable.OnStomp.Invoke();
+                            if (targetStompable.bouncy)
+                            {
+                                velocity.y = targetStompable.bounceForce;
+                            }
+                        }
+                        break; // Exit loop after hitting a valid target
+                    }
+                }
             }
             else if (hoverPressed && velocity.y < 0f)
             {

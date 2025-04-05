@@ -60,8 +60,9 @@ public class CollisionDetector2D : MonoBehaviour
         return hit.collider != null;
     }
 
-    public bool IsGrounded()
+    public Collider2D GetHitsBelow(LayerMask? layerMask)
     {
+        var mask = layerMask ?? groundCheck.layer;
         // Use the boxCollider's size and offset
         Vector2 origin = (Vector2)transform.position + (Vector2)boxCollider.offset;
         Vector2 size = boxCollider.size;
@@ -73,6 +74,13 @@ public class CollisionDetector2D : MonoBehaviour
         size.y = groundCheck.distance;
 
         Collider2D hit = Physics2D.OverlapBox(origin, size, 0f, groundCheck.layer);
+
+        return hit;
+    }
+
+    public bool IsGrounded()
+    {
+        var hit = GetHitsBelow(null);
 
         if (hit != null)
         {
