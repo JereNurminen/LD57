@@ -4,6 +4,7 @@ public class CameraController : MonoBehaviour
 {
     public bool isEnabled = true;
     public Vector2 offset;
+    public bool followImmediately = true;
     public float followSpeed = 5f;
     private PlayerController playerController;
 
@@ -28,11 +29,9 @@ public class CameraController : MonoBehaviour
         }
         Vector3 targetPosition =
             playerController.transform.position + new Vector3(offset.x, offset.y, -10);
-        Vector3 newPosition = Vector3.Lerp(
-            transform.position,
-            targetPosition,
-            followSpeed * Time.deltaTime
-        );
+        Vector3 newPosition = followImmediately
+            ? targetPosition
+            : Vector3.Lerp(transform.position, targetPosition, followSpeed * Time.deltaTime);
 
         float cameraHalfWidth =
             Camera.main.orthographicSize * ((float)Screen.width / Screen.height);

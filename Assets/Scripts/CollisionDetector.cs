@@ -72,28 +72,6 @@ public class CollisionDetector2D : MonoBehaviour
         // Adjust the size to extend slightly below the collider
         size.y = groundCheck.distance;
 
-        // Draw the OverlapBox area for debugging
-        Debug.DrawLine(
-            origin - size / 2,
-            origin + new Vector2(size.x / 2, -size.y / 2),
-            Color.blue
-        );
-        Debug.DrawLine(
-            origin + new Vector2(size.x / 2, -size.y / 2),
-            origin + size / 2,
-            Color.blue
-        );
-        Debug.DrawLine(
-            origin + size / 2,
-            origin + new Vector2(-size.x / 2, size.y / 2),
-            Color.blue
-        );
-        Debug.DrawLine(
-            origin + new Vector2(-size.x / 2, size.y / 2),
-            origin - size / 2,
-            Color.blue
-        );
-
         Collider2D hit = Physics2D.OverlapBox(origin, size, 0f, groundCheck.layer);
 
         if (hit != null)
@@ -103,15 +81,59 @@ public class CollisionDetector2D : MonoBehaviour
         }
         else
         {
-            Debug.Log("No ground detected");
             return false;
         }
     }
 
-    public bool IsTouchingCeiling() => CheckCollision(ceilingCheck, Vector2.up);
+    public bool IsTouchingCeiling()
+    {
+        // Use the boxCollider's size and offset
+        Vector2 origin = (Vector2)transform.position + (Vector2)boxCollider.offset;
+        Vector2 size = boxCollider.size;
 
-    public bool IsTouchingWall() =>
-        CheckCollision(wallCheck, Vector2.left) || CheckCollision(wallCheck, Vector2.right);
+        // Adjust the origin to position the OverlapBox at the top of the collider
+        origin.y += (boxCollider.size.y / 2) + (groundCheck.distance / 2);
+
+        // Adjust the size to extend slightly below the collider
+        size.y = groundCheck.distance;
+
+        Collider2D hit = Physics2D.OverlapBox(origin, size, 0f, ceilingCheck.layer);
+
+        if (hit != null)
+        {
+            Debug.Log($"Ceiling detected: {hit.name}");
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public bool IsTouchingWall(Vector2 dir)
+    {
+        // Use the boxCollider's size and offset
+        Vector2 origin = (Vector2)transform.position + (Vector2)boxCollider.offset;
+        Vector2 size = boxCollider.size;
+
+        // Adjust the origin to position the OverlapBox at the side of the collider
+        origin += dir * ((boxCollider.size.x / 2) + (wallCheck.distance / 2));
+
+        // Adjust the size to extend slightly beyond the collider
+        size.x = wallCheck.distance;
+
+        Collider2D hit = Physics2D.OverlapBox(origin, size, 0f, wallCheck.layer);
+
+        if (hit != null)
+        {
+            Debug.Log($"Wall detected: {hit.name}");
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 
     public Vector2 GetNewPosition(Vector2 desiredMovement)
     {

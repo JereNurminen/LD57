@@ -140,6 +140,24 @@ public class PlayerController : MonoBehaviour
                 ? moveSpeed
                 : 0f;
 
+        if (velocity.x > 0f)
+        {
+            var isTouchingWall = collisionDetector.IsTouchingWall(Vector2.right);
+            if (isTouchingWall)
+            {
+                velocity.x = 0f;
+            }
+        }
+        else if (velocity.x < 0f)
+        {
+            var isTouchingWall = collisionDetector.IsTouchingWall(Vector2.left);
+            if (isTouchingWall)
+            {
+                velocity.x = 0f;
+            }
+        }
+        else if (Mathf.Approximately(velocity.x, 0f)) { }
+
         // Ground detection via our collision detector.
         if (isNowGrounded)
         {
@@ -161,9 +179,14 @@ public class PlayerController : MonoBehaviour
             var gravityToApply = gravity;
             var fallSpeed = maxFallSpeed;
 
+            if (collisionDetector.IsTouchingCeiling())
+            {
+                Debug.Log("Ceiling hit");
+                velocity.y = 0f;
+            }
+
             if (dropPressed)
             {
-                Debug.Log("Drop");
                 animator.SetBool("isDropping", true);
                 animator.SetBool("isHovering", false);
                 gravityToApply = dropGravity;
@@ -171,7 +194,6 @@ public class PlayerController : MonoBehaviour
             }
             else if (hoverPressed && velocity.y < 0f)
             {
-                Debug.Log("Hover");
                 animator.SetBool("isDropping", false);
                 animator.SetBool("isHovering", true);
                 gravityToApply = hoverGravity;
