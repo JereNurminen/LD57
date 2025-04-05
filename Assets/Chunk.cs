@@ -12,23 +12,28 @@ public class Chunk : MonoBehaviour
 
     private GameManager gameManager;
     private bool playerInChunk = false;
+    private float entryY;
+    private float exitY;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         gameManager = FindFirstObjectByType<GameManager>();
+        entryY = transform.TransformPoint(entryPoint).y;
+        exitY = transform.TransformPoint(exitPoint).y;
     }
 
     // Update is called once per frame
     void Update()
     {
         if (
-            entryPoint.y > gameManager.player.transform.position.y
-            && gameManager.player.transform.position.y > exitPoint.y
+            entryY > gameManager.player.transform.position.y
+            && gameManager.player.transform.position.y > exitY
         )
         {
             if (!playerInChunk)
             {
+                Debug.Log("Player entered chunk: " + chunkIndex);
                 playerInChunk = true;
                 gameManager.OnPlayerEnterChunk(this);
             }

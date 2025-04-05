@@ -77,7 +77,9 @@ public class GameManager : MonoBehaviour
             throw new System.Exception("Starting chunk is not set");
         }
         loadedChunks = new List<Chunk>();
-        AddChunk(startingChunk.GetComponent<Chunk>());
+        var firstChunk = startingChunk.GetComponent<Chunk>();
+        AddChunk(firstChunk);
+        currentChunk = firstChunk;
         foreach (var i in Enumerable.Range(0, chunksForward))
         {
             LoadNextChunk();

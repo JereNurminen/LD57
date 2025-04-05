@@ -13,6 +13,7 @@ public class CameraController : MonoBehaviour
     void Start()
     {
         playerController = FindFirstObjectByType<PlayerController>();
+        gameManager = FindFirstObjectByType<GameManager>();
         /*
         cameraBounds = GameObject
             .Find("Level Manager")
@@ -41,9 +42,10 @@ public class CameraController : MonoBehaviour
         float minX = gameManager.currentChunk.cameraMinX + cameraHalfWidth;
         float maxX = gameManager.currentChunk.cameraMaxX - cameraHalfWidth;
 
+        // If the camera's target position is outside the bounds, don't move it
         if (targetPosition.x < minX || targetPosition.x > maxX)
         {
-            return;
+            targetPosition.x = transform.position.x;
         }
 
         transform.position = newPosition;
