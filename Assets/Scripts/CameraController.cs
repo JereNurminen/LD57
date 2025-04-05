@@ -7,6 +7,7 @@ public class CameraController : MonoBehaviour
     public bool followImmediately = true;
     public float followSpeed = 5f;
     private PlayerController playerController;
+    private GameManager gameManager;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -37,12 +38,13 @@ public class CameraController : MonoBehaviour
             Camera.main.orthographicSize * ((float)Screen.width / Screen.height);
         float cameraHalfHeight = Camera.main.orthographicSize;
 
-        /*
-        float minX = cameraBounds.bounds.min.x + cameraHalfWidth;
-        float maxX = cameraBounds.bounds.max.x - cameraHalfWidth;
-        float minY = cameraBounds.bounds.min.y + cameraHalfHeight;
-        float maxY = cameraBounds.bounds.max.y - cameraHalfHeight;
-        */
+        float minX = gameManager.currentChunk.cameraMinX + cameraHalfWidth;
+        float maxX = gameManager.currentChunk.cameraMaxX - cameraHalfWidth;
+
+        if (targetPosition.x < minX || targetPosition.x > maxX)
+        {
+            return;
+        }
 
         transform.position = newPosition;
     }
