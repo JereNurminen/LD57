@@ -48,6 +48,7 @@ public class PatrolController : MonoBehaviour
 
     public void Die()
     {
+        GetComponent<BoxCollider2D>().enabled = false;
         speed = 0;
     }
 

@@ -114,6 +114,21 @@ public class PlayerController : MonoBehaviour
     {
         if (hazardLayerMask == (hazardLayerMask | (1 << collision.gameObject.layer)))
         {
+            if (dropPressed)
+            {
+                var contact = collision.GetContact(0);
+                var isFromAbove = contact.normal.y > 0.5f;
+                var stompable = collision.gameObject.GetComponent<Stompable>();
+
+                if (stompable != null && isFromAbove)
+                {
+                    return;
+                }
+                else
+                {
+                    Debug.Log("Hit hazard from above");
+                }
+            }
             isAlive = false;
             gameManager.OnPlayerDeath();
             //animator.SetTrigger("hit");
@@ -222,8 +237,8 @@ public class PlayerController : MonoBehaviour
                 fallSpeed = maxDropFallSpeed;
 
                 var bounds = playerCollider.bounds;
-                float rayLength = 1f;
-                int rayCount = 3;
+                float rayLength = 3f;
+                int rayCount = 5;
                 float spacing = bounds.size.x / (rayCount - 1);
 
                 for (int i = 0; i < rayCount; i++)
@@ -235,6 +250,8 @@ public class PlayerController : MonoBehaviour
                         rayLength,
                         dropLayerMask
                     );
+
+                    Debug.DrawRay(rayOrigin, Vector2.down * rayLength, Color.red);
 
                     if (hit.collider != null)
                     {
