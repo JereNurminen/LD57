@@ -1,5 +1,3 @@
-using NUnit.Framework.Constraints;
-using UnityEditor.EditorTools;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -268,5 +266,14 @@ public class PlayerController : MonoBehaviour
             animator.SetBool("isGrounded", false);
         }
         isGrounded = isNowGrounded;
+        animator.SetBool("isGrounded", isGrounded);
+        if (isGrounded && !Mathf.Approximately(velocity.x, 0f))
+        {
+            animator.SetBool("isRunning", true);
+        }
+        else
+        {
+            animator.SetBool("isRunning", false);
+        }
     }
 }
