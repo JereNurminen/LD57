@@ -20,6 +20,12 @@ public class GameManager : MonoBehaviour
     [Tooltip("Number of chunks to keep alive behind the player")]
     private int chunksBackward = 2;
 
+    [SerializeField]
+    private Chunk[] debugChunks;
+
+    [SerializeField]
+    private bool useDebugChunks = false;
+
     public PlayerController player;
     private List<Chunk> loadedChunks;
     private int lastChunkIndex = 0;
@@ -34,7 +40,15 @@ public class GameManager : MonoBehaviour
     void LoadNextChunk()
     {
         var lastChunk = loadedChunks.Last();
+
         var nextChunkPrefab = possibleChunks[UnityEngine.Random.Range(0, possibleChunks.Length)];
+
+        if (useDebugChunks && debugChunks.Length > 0)
+        {
+            // Use a random debug chunk
+            nextChunkPrefab = debugChunks.First();
+            debugChunks = debugChunks.Skip(1).ToArray();
+        }
 
         // Get the world position of the last chunk's exitPoint
         var currentExitPos = lastChunk.transform.TransformPoint(lastChunk.exitPoint);
