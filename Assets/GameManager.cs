@@ -26,11 +26,55 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private bool useDebugChunks = false;
 
+    [SerializeField]
+    private int scorePerChunk = 100;
+    private int score = 0;
+
     public PlayerController player;
     private List<Chunk> loadedChunks;
     private int lastChunkIndex = 0;
+    private HUDManager hudManager;
+    private SlideInController slideInController;
 
     public Chunk currentChunk;
+
+    private bool gameOver = false;
+
+    void Awake()
+    {
+        hudManager = FindFirstObjectByType<HUDManager>();
+        slideInController = FindFirstObjectByType<SlideInController>();
+
+        if (hudManager == null)
+        {
+            throw new Exception("HUDManager not found in the scene");
+        }
+
+        if (slideInController == null)
+        {
+            throw new Exception("SlideInController not found in the scene");
+        }
+    }
+
+    public void AddToScore(int amount)
+    {
+        score += amount;
+        hudManager.UpdateScore(score);
+    }
+
+    public void OnPlayerDeath()
+    {
+        // Handle player death
+        Debug.Log("Player has died");
+        slideInController.SlideIn(
+            score,
+            () =>
+            {
+                gameOver = true;
+                Debug.Log("Game Over");
+            }
+        );
+    }
 
     int GetChunkIndex()
     {
@@ -71,6 +115,7 @@ public class GameManager : MonoBehaviour
         {
             LoadNextChunk();
         }
+        AddToScore(scorePerChunk);
     }
 
     void AddChunk(Chunk chunk)
@@ -101,5 +146,14 @@ public class GameManager : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update() { }
+    void Update()
+    {
+        if (gameOver && Input.anyKeyDown)
+        {
+            // Restart the game
+            UnityEngine.SceneManagement.SceneManager.LoadScene(
+                UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex
+            );
+        }
+    }
 }

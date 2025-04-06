@@ -47,6 +47,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private LayerMask dropLayerMask;
 
+    [Tooltip("Level hazard layers")]
+    [SerializeField]
+    private LayerMask hazardLayerMask;
+
     private bool isGrounded = false;
     private bool jumpConsumed = false;
     private bool isHovering = false;
@@ -69,12 +73,16 @@ public class PlayerController : MonoBehaviour
     private bool leftPressed;
     private bool rightPressed;
 
+    private bool isAlive = true;
+    private GameManager gameManager;
+
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         playerCollider = GetComponent<Collider2D>();
         collisionDetector = GetComponent<CollisionDetector2D>();
         animator = GetComponent<Animator>();
+        gameManager = FindFirstObjectByType<GameManager>();
 
         // Set Rigidbody2D to kinematic for manual control.
         rb.bodyType = RigidbodyType2D.Kinematic;
@@ -102,8 +110,21 @@ public class PlayerController : MonoBehaviour
         dropAction.Disable();
     }
 
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (hazardLayerMask == (hazardLayerMask | (1 << collision.gameObject.layer)))
+        {
+            isAlive = false;
+            gameManager.OnPlayerDeath();
+            //animator.SetTrigger("hit");
+        }
+    }
+
     void Update()
     {
+        if (!isAlive)
+            return;
+
         leftPressed = moveAction.ReadValue<Vector2>().x < 0;
         rightPressed = moveAction.ReadValue<Vector2>().x > 0;
 
@@ -125,6 +146,9 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (!isAlive)
+            return;
+
         var wasGrounded = isGrounded;
         var isNowGrounded = collisionDetector.IsGrounded();
 
