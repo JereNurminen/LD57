@@ -101,33 +101,8 @@ public class DaggerController : MonoBehaviour
     {
         if (wallMask == (wallMask | (1 << collision.gameObject.layer)))
         {
-            // Reflect the dagger's velocity based on the collision normal
-            Vector2 normal = collision.contacts[0].normal;
-            shootDirection = Vector2.Reflect(shootDirection, normal);
-            rb.linearVelocity = shootDirection * speed;
-
-            // Update the target rotation to point in the new direction
-            float angle = Mathf.Atan2(shootDirection.y, shootDirection.x) * Mathf.Rad2Deg - 90f;
-            targetRotation = Quaternion.Euler(0, 0, angle);
-
-            // Reset to idle state after 2 seconds
-            if (resetCoroutine != null)
-            {
-                StopCoroutine(resetCoroutine);
-            }
-            resetCoroutine = StartCoroutine(ResetToIdleAfterDelay(2f));
+            // Trigger the dagger's death when it hits a wall
+            Die();
         }
-    }
-
-    private IEnumerator ResetToIdleAfterDelay(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-
-        rb.linearVelocity = Vector2.zero;
-        isShooting = false;
-        timeSincePlayerInRange = 0f;
-
-        // Set the target rotation to point upwards
-        targetRotation = Quaternion.Euler(0, 0, 0);
     }
 }

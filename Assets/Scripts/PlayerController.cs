@@ -110,6 +110,11 @@ public class PlayerController : MonoBehaviour
         dropAction.Disable();
     }
 
+    public void OnDeathAnimationCompleted()
+    {
+        GetComponent<SpriteRenderer>().enabled = false;
+    }
+
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (hazardLayerMask == (hazardLayerMask | (1 << collision.gameObject.layer)))
@@ -131,7 +136,7 @@ public class PlayerController : MonoBehaviour
             }
             isAlive = false;
             gameManager.OnPlayerDeath();
-            //animator.SetTrigger("hit");
+            animator.SetTrigger("death");
         }
     }
 
