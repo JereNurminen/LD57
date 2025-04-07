@@ -1,9 +1,9 @@
 using UnityEngine;
 
-public class Score : MonoBehaviour
+public class Score : MonoBehaviour, IDifficultyConfigurable
 {
     [SerializeField]
-    private int score = 5;
+    private DifficultySettings<int> score;
 
     public void ScorePoints()
     {
@@ -17,5 +17,10 @@ public class Score : MonoBehaviour
         {
             Debug.LogError("GameManager not found in the scene.");
         }
+    }
+
+    public void SetDifficulty(Difficulty difficulty)
+    {
+        score.SetDifficulty(difficulty);
     }
 }

@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 8473543761877497754}
   - component: {fileID: 3110457024956615709}
   - component: {fileID: 1773322948345556221}
+  - component: {fileID: 6912307747895739993}
   m_Layer: 9
   m_Name: Dagger
   m_TagString: Untagged
@@ -105,10 +106,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4cdb95fc77b804a8ab32801315c20c75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 160
+  speed:
+    easy: 128
+    medium: 256
+    hard: 512
   range: 256
-  waitTime: 1
-  rotationSpeed: 720
+  waitTime:
+    easy: 1.5
+    medium: 1
+    hard: 0.5
+  rotationSpeed:
+    easy: 360
+    medium: 720
+    hard: 1080
   wallMask:
     serializedVersion: 2
     m_Bits: 64
@@ -226,7 +236,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7477705420c5c4d6da4f34c509bcf175, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  score: 50
+  score:
+    easy: 20
+    medium: 40
+    hard: 80
 --- !u!95 &1773322948345556221
 Animator:
   serializedVersion: 7
@@ -249,3 +262,15 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &6912307747895739993
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4722424282764796314}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62cb4fb6210e248219f135786d1cceda, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

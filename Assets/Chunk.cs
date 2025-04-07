@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -16,6 +17,7 @@ public class Chunk : MonoBehaviour
     private float exitY;
     public float cameraWorldMinX;
     public float cameraWorldMaxX;
+    public Difficulty difficulty = Difficulty.Easy;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -25,6 +27,26 @@ public class Chunk : MonoBehaviour
         exitY = transform.TransformPoint(exitPoint).y;
         cameraWorldMinX = transform.TransformPoint(new Vector2(cameraMinX, 0)).x;
         cameraWorldMaxX = transform.TransformPoint(new Vector2(cameraMaxX, 0)).x;
+
+        // Automatically set difficulty for all components on this GameObject
+        SetDifficultyForAllChildren();
+    }
+
+    private void SetDifficultyForAllChildren()
+    {
+        // Iterate through all child GameObjects
+        foreach (Transform child in transform)
+        {
+            // Get all components that implement the IDifficultyConfigurable interface
+            var configurableComponents = child.GetComponentsInChildren<IDifficultyConfigurable>(
+                true
+            );
+
+            foreach (var component in configurableComponents)
+            {
+                component.SetDifficulty(difficulty); // Directly call the method
+            }
+        }
     }
 
     // Update is called once per frame

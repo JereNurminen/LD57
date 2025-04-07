@@ -1,19 +1,19 @@
 using System.Collections;
 using UnityEngine;
 
-public class DaggerController : MonoBehaviour
+public class DaggerController : MonoBehaviour, IDifficultyConfigurable
 {
     [SerializeField]
-    private float speed = 5f;
+    private DifficultySettings<float> speed;
 
     [SerializeField]
     private float range = 62f;
 
     [SerializeField]
-    private float waitTime = 1f;
+    private DifficultySettings<float> waitTime;
 
     [SerializeField]
-    private float rotationSpeed = 360f;
+    private DifficultySettings<float> rotationSpeed;
 
     [SerializeField]
     private LayerMask wallMask;
@@ -35,6 +35,13 @@ public class DaggerController : MonoBehaviour
         playerController = FindFirstObjectByType<PlayerController>();
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+    }
+
+    public void SetDifficulty(Difficulty difficulty)
+    {
+        speed.SetDifficulty(difficulty);
+        waitTime.SetDifficulty(difficulty);
+        rotationSpeed.SetDifficulty(difficulty);
     }
 
     void Update()
@@ -73,7 +80,6 @@ public class DaggerController : MonoBehaviour
     public void Die()
     {
         GetComponent<BoxCollider2D>().enabled = false;
-        speed = 0;
         rb.linearVelocity = Vector2.zero; // Stop the dagger's movement
         animator.SetTrigger("death");
     }
