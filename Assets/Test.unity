@@ -346,7 +346,7 @@ GameObject:
   - component: {fileID: 750527010}
   - component: {fileID: 750527009}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: Score
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -391,7 +391,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: <mspace=0.5em>12345678910</mspace>
+  m_text: <mspace=0.5em>000000000</mspace>
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 63e1031d273334efda7adc612cafefa3, type: 2}
   m_sharedMaterial: {fileID: 5428031377348546764, guid: 63e1031d273334efda7adc612cafefa3, type: 2}
@@ -630,22 +630,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37f43feded6c8495f8e82ffb2386b52d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  possibleChunks:
-  - {fileID: 7491397576039820948, guid: b9ed38f1d4c554803861355032b47c9e, type: 3}
-  - {fileID: 7491397576039820948, guid: 38874f68cea9045b6bc97a29a48093a6, type: 3}
-  - {fileID: 7491397576039820948, guid: 78de0987777474fab9754e097f201882, type: 3}
-  - {fileID: 7491397576039820948, guid: 27439eea19cd746ee80ba785ada520a0, type: 3}
   startingChunk: {fileID: 1598733271}
   chunksForward: 10
   chunksBackward: 2
   debugChunks:
   - {fileID: 7491397576039820948, guid: b9ed38f1d4c554803861355032b47c9e, type: 3}
   - {fileID: 7491397576039820948, guid: 24486ebbe465740538ef5e069c201af4, type: 3}
-  useDebugChunks: 1
+  useDebugChunks: 0
   scorePerChunk: 100
   player: {fileID: 0}
   currentChunk: {fileID: 0}
   playerHasFinished: 0
+  easyChunks:
+  - {fileID: 7491397576039820948, guid: 615f9e8f6563444079ea70aac5935371, type: 3}
+  - {fileID: 7491397576039820948, guid: 50d968a5fa2084d6a94b857b2b60de5f, type: 3}
+  mediumChunks:
+  - {fileID: 7491397576039820948, guid: 78de0987777474fab9754e097f201882, type: 3}
+  - {fileID: 7491397576039820948, guid: 27439eea19cd746ee80ba785ada520a0, type: 3}
+  hardChunks:
+  - {fileID: 7491397576039820948, guid: b9ed38f1d4c554803861355032b47c9e, type: 3}
+  - {fileID: 7491397576039820948, guid: 15dfc0ea407c44561965a15dea9ca656, type: 3}
+  goalChunk: {fileID: 7491397576039820948, guid: 24486ebbe465740538ef5e069c201af4, type: 3}
   congratulationsText: {fileID: 2023444900}
 --- !u!4 &1483810773
 Transform:
