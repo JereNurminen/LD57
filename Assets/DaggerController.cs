@@ -8,7 +8,7 @@ public class DaggerController : MonoBehaviour, IDifficultyConfigurable
     private DifficultySettings<float> speed;
 
     [SerializeField]
-    private float range = 62f;
+    public float range = 62f;
 
     [SerializeField]
     private DifficultySettings<float> waitTime;

@@ -14,6 +14,9 @@ public class DaggerSpawner : MonoBehaviour, IDifficultyConfigurable
     private bool waitingToSpawn = true;
 
     [SerializeField]
+    private float daggerRange = 62f;
+
+    [SerializeField]
     private List<Difficulty> allowedDifficulties = new List<Difficulty>();
 
     private Difficulty difficulty;
@@ -52,6 +55,7 @@ public class DaggerSpawner : MonoBehaviour, IDifficultyConfigurable
         {
             SpawnDagger();
             timeSinceLastSpawnHit = 0f;
+            waitingToSpawn = false;
         }
     }
 
@@ -73,6 +77,7 @@ public class DaggerSpawner : MonoBehaviour, IDifficultyConfigurable
             {
                 daggerController.SetRespawner(this); // Set the spawner reference in the dagger
                 daggerController.SetDifficulty(this.difficulty); // Set the difficulty for the dagger
+                daggerController.range = daggerRange; // Set the range for the dagger
                 waitingToSpawn = true;
             }
         }
@@ -80,5 +85,14 @@ public class DaggerSpawner : MonoBehaviour, IDifficultyConfigurable
         {
             Debug.LogWarning("DaggerPrefab or SpawnPoint is not assigned in DaggerSpawner.");
         }
+    }
+
+    private void OnDrawGizmos()
+    {
+        // Set the gizmo color
+        Gizmos.color = Color.red;
+
+        // Draw a wire sphere to represent the dagger range
+        Gizmos.DrawWireSphere(transform.position, daggerRange);
     }
 }
