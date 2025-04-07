@@ -138,6 +138,19 @@ public class PlayerController : MonoBehaviour
             gameManager.OnPlayerDeath();
             animator.SetTrigger("death");
         }
+        else if (
+            dropPressed && dropLayerMask == (dropLayerMask | (1 << collision.gameObject.layer))
+        )
+        {
+            var contact = collision.GetContact(0);
+            var isFromAbove = contact.normal.y > 0.5f;
+            var stompable = collision.gameObject.GetComponent<Stompable>();
+
+            if (stompable != null && isFromAbove)
+            {
+                stompable.OnStomp.Invoke();
+            }
+        }
     }
 
     void Update()
@@ -240,40 +253,6 @@ public class PlayerController : MonoBehaviour
                 animator.SetBool("isHovering", false);
                 gravityToApply = dropGravity;
                 fallSpeed = maxDropFallSpeed;
-
-                var bounds = playerCollider.bounds;
-                float rayLength = 3f;
-                int rayCount = 5;
-                float spacing = bounds.size.x / (rayCount - 1);
-
-                for (int i = 0; i < rayCount; i++)
-                {
-                    Vector2 rayOrigin = new Vector2(bounds.min.x + i * spacing, bounds.min.y);
-                    RaycastHit2D hit = Physics2D.Raycast(
-                        rayOrigin,
-                        Vector2.down,
-                        rayLength,
-                        dropLayerMask
-                    );
-
-                    Debug.DrawRay(rayOrigin, Vector2.down * rayLength, Color.red);
-
-                    if (hit.collider != null)
-                    {
-                        var target = hit.collider.gameObject;
-                        Debug.Log($"Dropped on {target.name}");
-                        var targetStompable = target.GetComponent<Stompable>();
-                        if (targetStompable != null)
-                        {
-                            targetStompable.OnStomp.Invoke();
-                            if (targetStompable.bouncy)
-                            {
-                                velocity.y = targetStompable.bounceForce;
-                            }
-                        }
-                        break; // Exit loop after hitting a valid target
-                    }
-                }
             }
             else if (hoverPressed && velocity.y < 0f)
             {
@@ -296,6 +275,50 @@ public class PlayerController : MonoBehaviour
 
         // Move the player using the adjusted movement.
         transform.position = collisionDetector.GetNewPosition(deltaMovement);
+
+        if (!isGrounded && dropPressed)
+        {
+            Vector2 colliderOffset = playerCollider.offset;
+            Vector2 colliderSize = playerCollider.bounds.size;
+
+            float rayLength = 3f;
+            int rayCount = 5;
+            float spacing = colliderSize.x / (rayCount - 1);
+
+            for (int i = 0; i < rayCount; i++)
+            {
+                // Adjust ray origins to account for the collider's offset
+                Vector2 rayOrigin = new Vector2(
+                    transform.position.x + colliderOffset.x - colliderSize.x / 2 + i * spacing,
+                    transform.position.y + colliderOffset.y - colliderSize.y / 2
+                );
+
+                RaycastHit2D hit = Physics2D.Raycast(
+                    rayOrigin,
+                    Vector2.down,
+                    rayLength,
+                    dropLayerMask
+                );
+
+                Debug.DrawRay(rayOrigin, Vector2.down * rayLength, Color.red);
+
+                if (hit.collider != null)
+                {
+                    var target = hit.collider.gameObject;
+                    Debug.Log($"Dropped on {target.name}");
+                    var targetStompable = target.GetComponent<Stompable>();
+                    if (targetStompable != null)
+                    {
+                        targetStompable.OnStomp.Invoke();
+                        if (targetStompable.bouncy)
+                        {
+                            velocity.y = targetStompable.bounceForce;
+                        }
+                    }
+                    break; // Exit loop after hitting a valid target
+                }
+            }
+        }
 
         isGrounded = isNowGrounded;
 

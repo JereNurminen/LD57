@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class DaggerController : MonoBehaviour, IDifficultyConfigurable
@@ -30,6 +31,21 @@ public class DaggerController : MonoBehaviour, IDifficultyConfigurable
 
     private Animator animator;
 
+    [SerializeField]
+    private List<Difficulty> allowedDifficulties = new List<Difficulty>(); // Backing field for allowed difficulties
+
+    public List<Difficulty> GetAllowedDifficulties()
+    {
+        return allowedDifficulties;
+    }
+
+    public void SetAllowedDifficulties(List<Difficulty> difficulties)
+    {
+        allowedDifficulties = difficulties;
+    }
+
+    private DaggerSpawner spawner;
+
     void Start()
     {
         playerController = FindFirstObjectByType<PlayerController>();
@@ -37,8 +53,22 @@ public class DaggerController : MonoBehaviour, IDifficultyConfigurable
         animator = GetComponent<Animator>();
     }
 
+    public void SetRespawner(DaggerSpawner newSpawner)
+    {
+        spawner = newSpawner;
+    }
+
     public void SetDifficulty(Difficulty difficulty)
     {
+        Debug.Log($"Setting difficulty to {difficulty} for {gameObject.name}");
+        Debug.Log($"Allowed difficulties: {string.Join(", ", allowedDifficulties)}");
+
+        if (!allowedDifficulties.Contains(difficulty))
+        {
+            Destroy(gameObject); // Destroy the GameObject if the difficulty is not allowed
+            return;
+        }
+
         speed.SetDifficulty(difficulty);
         waitTime.SetDifficulty(difficulty);
         rotationSpeed.SetDifficulty(difficulty);
@@ -101,6 +131,11 @@ public class DaggerController : MonoBehaviour, IDifficultyConfigurable
         isShooting = true;
         shootDirection = (playerController.transform.position - transform.position).normalized;
         rb.linearVelocity = shootDirection * speed;
+
+        if (spawner != null)
+        {
+            spawner.OnDaggerLaunch();
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
