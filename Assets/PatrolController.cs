@@ -19,24 +19,52 @@ public class PatrolController : MonoBehaviour
     private CollisionDetector2D collisionDetector;
     private PatrolDirection patrolDirection = PatrolDirection.Right;
 
+    [SerializeField]
+    private bool detectLedges = true;
+
+    [SerializeField]
+    private LayerMask floorMask;
+
+    private BoxCollider2D boxCollider;
+    private Animator animator;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         collisionDetector = GetComponent<CollisionDetector2D>();
+        boxCollider = GetComponent<BoxCollider2D>();
+        animator = GetComponent<Animator>();
     }
 
     bool DetectLedge()
     {
-        return false;
-        // Check if the player is at the edge of a ledge
-        Vector2 origin = (Vector2)transform.position + new Vector2(0, -0.5f);
-        RaycastHit2D hit = Physics2D.Raycast(
-            origin,
+        Vector2 farOrigin =
+            patrolDirection == PatrolDirection.Right
+                ? new Vector2(boxCollider.bounds.max.x + 6f, boxCollider.bounds.min.y + 3f)
+                : new Vector2(boxCollider.bounds.min.x - 6f, boxCollider.bounds.min.y + 3f);
+        RaycastHit2D farHit = Physics2D.Raycast(
+            farOrigin,
             Vector2.down,
-            1f,
+            6f,
             collisionDetector.collisionMask
         );
-        return hit.collider == null;
+
+        Vector2 closeOrigin =
+            patrolDirection == PatrolDirection.Right
+                ? new Vector2(boxCollider.bounds.max.x + 2f, boxCollider.bounds.min.y + 3f)
+                : new Vector2(boxCollider.bounds.min.x - 2f, boxCollider.bounds.min.y + 3f);
+        RaycastHit2D closeHit = Physics2D.Raycast(
+            closeOrigin,
+            Vector2.down,
+            6f,
+            collisionDetector.collisionMask
+        );
+
+        // Draw the rays
+        Debug.DrawRay(farOrigin, Vector2.down * 6f, Color.red);
+        Debug.DrawRay(closeOrigin, Vector2.down * 6f, Color.red);
+
+        return farHit.collider == null && closeHit.collider == null;
     }
 
     bool DetectWall()
@@ -55,6 +83,13 @@ public class PatrolController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Self destruct if they somehow end up in the air
+        if (!collisionDetector.IsGrounded())
+        {
+            animator.SetTrigger("death");
+            Die();
+        }
+
         // Check if the enemy is at the edge of a ledge
         if (DetectWall() || DetectLedge())
         {

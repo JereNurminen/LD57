@@ -104,8 +104,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bounceHeight: 58
-  bounceDelay: 1
-  isBouncy: 1
+  bounceCycleDuration: 1
+  bounceCycleOffset: 1
 --- !u!114 &2568835639807912199
 MonoBehaviour:
   m_ObjectHideFlags: 0
