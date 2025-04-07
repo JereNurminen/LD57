@@ -46,6 +46,11 @@ public class DaggerController : MonoBehaviour, IDifficultyConfigurable
 
     private DaggerSpawner spawner;
 
+    private bool hasSeenPlayer = false;
+
+    [SerializeField]
+    private LayerMask solidLayerMask;
+
     void Start()
     {
         playerController = FindFirstObjectByType<PlayerController>();
@@ -121,7 +126,9 @@ public class DaggerController : MonoBehaviour, IDifficultyConfigurable
 
     private void RotateTowardsPlayer()
     {
-        Vector2 direction = (playerController.transform.position - transform.position).normalized;
+        Vector2 direction = (
+            playerController.playerCollider.bounds.center - transform.position
+        ).normalized;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
         targetRotation = Quaternion.Euler(0, 0, angle); // Update the target rotation
     }

@@ -7,11 +7,19 @@ public class CameraController : MonoBehaviour
     private PlayerController playerController;
     private GameManager gameManager;
 
+    [SerializeField]
+    private AudioClip bgMusic;
+    private AudioSource audioSource;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         playerController = FindFirstObjectByType<PlayerController>();
         gameManager = FindFirstObjectByType<GameManager>();
+        audioSource = GetComponent<AudioSource>();
+        audioSource.clip = bgMusic;
+        audioSource.Play();
+        audioSource.loop = true;
     }
 
     // Update is called once per frame

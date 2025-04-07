@@ -56,7 +56,7 @@ public class PlayerController : MonoBehaviour
     private bool isHovering = false;
 
     private Rigidbody2D rb;
-    private Collider2D playerCollider;
+    public Collider2D playerCollider;
     private CollisionDetector2D collisionDetector;
     private PlayerInput playerInput;
     private InputAction moveAction;

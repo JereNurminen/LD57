@@ -122,6 +122,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   allowedDifficulties: 000000000100000002000000
+  solidLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!61 &7984782130972619618
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -223,7 +226,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   bouncy: 1
-  bounceForce: 100
+  bounceForce: 250
 --- !u!114 &3110457024956615709
 MonoBehaviour:
   m_ObjectHideFlags: 0

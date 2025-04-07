@@ -129,4 +129,5 @@ MonoBehaviour:
     medium: 1.5
     hard: 1
   timeSinceLastSpawnHit: 0
+  daggerRange: 62
   allowedDifficulties: 000000000100000002000000
