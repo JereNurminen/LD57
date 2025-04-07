@@ -51,7 +51,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private LayerMask hazardLayerMask;
 
-    private bool isGrounded = false;
+    public bool isGrounded = false;
     private bool jumpConsumed = false;
     private bool isHovering = false;
 

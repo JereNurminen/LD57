@@ -105,9 +105,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   score:
-    easy: 0
-    medium: 0
-    hard: 0
+    easy: 50
+    medium: 75
+    hard: 125
 --- !u!114 &6392082181895494552
 MonoBehaviour:
   m_ObjectHideFlags: 0

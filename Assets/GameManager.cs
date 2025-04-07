@@ -1,14 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Purchasing;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField]
-    private Chunk[] possibleChunks;
-
     [SerializeField]
     private GameObject startingChunk;
 
@@ -40,6 +38,27 @@ public class GameManager : MonoBehaviour
 
     private bool gameOver = false;
 
+    private float timeSinceStarted = 0f;
+    private bool playerHasStarted = false;
+    public bool playerHasFinished = false;
+
+    [SerializeField]
+    private Chunk[] easyChunks;
+
+    [SerializeField]
+    private Chunk[] mediumChunks;
+
+    [SerializeField]
+    private Chunk[] hardChunks;
+
+    [SerializeField]
+    private Chunk goalChunk;
+
+    [SerializeField]
+    private TMPro.TMP_Text congratulationsText;
+
+    private Chunk[] chunkQueue;
+
     void Awake()
     {
         hudManager = FindFirstObjectByType<HUDManager>();
@@ -58,6 +77,7 @@ public class GameManager : MonoBehaviour
 
     public void AddToScore(int amount)
     {
+        Debug.Log($"Adding {amount} to score");
         score += amount;
         hudManager.UpdateScore(score);
     }
@@ -85,13 +105,12 @@ public class GameManager : MonoBehaviour
     {
         var lastChunk = loadedChunks.Last();
 
-        var nextChunkPrefab = possibleChunks[UnityEngine.Random.Range(0, possibleChunks.Length)];
+        var nextChunkPrefab = chunkQueue.First();
 
-        if (useDebugChunks && debugChunks.Length > 0)
+        if (nextChunkPrefab == null)
         {
-            // Use a random debug chunk
-            nextChunkPrefab = debugChunks.First();
-            debugChunks = debugChunks.Skip(1).ToArray();
+            Debug.LogError("no more chunks in the queue");
+            return;
         }
 
         // Get the world position of the last chunk's exitPoint
@@ -106,10 +125,13 @@ public class GameManager : MonoBehaviour
         // Instantiate and add the new chunk
         var newChunk = Instantiate(nextChunkPrefab, spawnPosition, Quaternion.identity);
         AddChunk(newChunk);
+        // drop the first chunk from the queue
+        chunkQueue = chunkQueue.Skip(1).ToArray();
     }
 
     public void OnPlayerEnterChunk(Chunk chunk)
     {
+        playerHasStarted = true;
         currentChunk = chunk;
         if (lastChunkIndex < chunk.chunkIndex + chunksForward)
         {
@@ -131,10 +153,23 @@ public class GameManager : MonoBehaviour
     {
         player = FindFirstObjectByType<PlayerController>();
 
-        if (startingChunk == null)
+        if (useDebugChunks && debugChunks.Length > 0)
         {
-            throw new System.Exception("Starting chunk is not set");
+            chunkQueue = debugChunks.Append(goalChunk).ToArray();
         }
+        else
+        {
+            var shuffledEasyChunks = ShuffleChunks(easyChunks);
+            var shuffledMediumChunks = ShuffleChunks(mediumChunks);
+            var shuffledHardChunks = ShuffleChunks(hardChunks);
+
+            chunkQueue = shuffledEasyChunks
+                .Concat(shuffledMediumChunks)
+                .Concat(shuffledHardChunks)
+                .Append(goalChunk)
+                .ToArray();
+        }
+
         loadedChunks = new List<Chunk>();
         var firstChunk = startingChunk.GetComponent<Chunk>();
         AddChunk(firstChunk);
@@ -145,9 +180,39 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private Chunk[] ShuffleChunks(Chunk[] chunks)
+    {
+        var shuffled = chunks.ToArray(); // Create a copy to avoid modifying the original array
+        for (int i = shuffled.Length - 1; i > 0; i--)
+        {
+            int randomIndex = UnityEngine.Random.Range(0, i + 1);
+            var temp = shuffled[i];
+            shuffled[i] = shuffled[randomIndex];
+            shuffled[randomIndex] = temp;
+        }
+        return shuffled;
+    }
+
+    public void OnPlayerFinish()
+    {
+        Debug.Log(
+            $"Player finished the game in {timeSinceStarted} seconds, with a score of {score}"
+        );
+        playerHasFinished = true;
+        congratulationsText.text = congratulationsText.text
+            .Replace("XX", Mathf.Floor(timeSinceStarted).ToString())
+            .Replace("YY", score.ToString());
+        congratulationsText.gameObject.SetActive(true);
+    }
+
     // Update is called once per frame
     void Update()
     {
+        if (playerHasStarted)
+        {
+            timeSinceStarted += Time.deltaTime;
+        }
+
         if (gameOver && Input.anyKeyDown)
         {
             // Restart the game

@@ -324,6 +324,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   score:
-    easy: 0
-    medium: 0
-    hard: 0
+    easy: 10
+    medium: 20
+    hard: 40
